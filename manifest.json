@@ -1,0 +1,76 @@
+{
+  "plugin_id": "memberra.silo",
+  "version": "1.0.2",
+  "checksum": "__CHECKSUM__",
+  "silo_api_version": "v1",
+  "presentation": {
+    "display_name": "Memberra",
+    "summary": "Connect this Silo server to Memberra for automatic customer accounts.",
+    "description_markdown": "Keeps an outbound, signed connection to your Memberra operator account. Memberra creates, suspends, restores and deletes customer accounts on this server, sets their libraries and applies package limits (streams, transcoding, downloads and remote bitrate). No inbound port or public URL is needed, and nothing else runs on the server: the plugin accepts only Memberra's fixed account commands and never manages Silo admin accounts.",
+    "setup_markdown": "1. In Silo, create an API key while signed in as an admin.\n2. In Memberra, open **Infrastructure → Silo plugin**, press **Pair a Silo server** and copy the one-time code.\n3. Open this plugin's settings, paste the pairing code and the admin API key, and save.\n4. Press **Check connection**. The server appears in Memberra within a few seconds.\n\nThe pairing code is used once; afterwards the plugin keeps a revocable token in Silo's encrypted plugin state. Revoke it from Memberra at any time.",
+    "homepage_url": "https://memberra.co.uk",
+    "publisher_name": "Memberra",
+    "publisher_url": "https://memberra.co.uk",
+    "license_spdx": "GPL-3.0-or-later"
+  },
+  "supported_platforms": [
+    { "os": "linux", "arch": "amd64" },
+    { "os": "linux", "arch": "arm64" },
+    { "os": "darwin", "arch": "arm64" }
+  ],
+  "metadata": { "configuration_check": true },
+  "capabilities": [
+    {
+      "type": "scheduled_task.v1",
+      "id": "connection",
+      "display_name": "Memberra connection",
+      "description": "Starts the Memberra connection when Silo starts and checks that it is still running."
+    }
+  ],
+  "global_config_schema": [
+    {
+      "key": "connection",
+      "title": "Memberra connection",
+      "description": "How this server reaches Memberra and its own admin API.",
+      "required": true,
+      "json_schema": "{\"type\":\"object\",\"properties\":{\"memberra_url\":{\"type\":\"string\",\"format\":\"uri\"},\"pairing_code\":{\"type\":\"string\"},\"silo_url\":{\"type\":\"string\",\"format\":\"uri\"},\"silo_api_key\":{\"type\":\"string\"}},\"additionalProperties\":false}",
+      "admin_form": {
+        "fields": [
+          {
+            "key": "memberra_url",
+            "label": "Memberra URL",
+            "description": "Your Memberra address. Leave as is unless you use a custom domain.",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "https://memberra.co.uk",
+            "default_value": "https://memberra.co.uk",
+            "required": true
+          },
+          {
+            "key": "pairing_code",
+            "label": "Pairing code",
+            "description": "One-time code from Memberra (Infrastructure → Silo plugin). Only needed to pair or re-pair.",
+            "control": "ADMIN_FORM_CONTROL_PASSWORD",
+            "secret": true
+          },
+          {
+            "key": "silo_url",
+            "label": "Silo URL",
+            "description": "Where the plugin reaches this server's API. The default works when the plugin runs inside Silo.",
+            "control": "ADMIN_FORM_CONTROL_TEXT",
+            "placeholder": "http://127.0.0.1:8090",
+            "default_value": "http://127.0.0.1:8090",
+            "required": true
+          },
+          {
+            "key": "silo_api_key",
+            "label": "Silo admin API key",
+            "description": "An API key created while signed in as a Silo admin. Used only to manage customer accounts.",
+            "control": "ADMIN_FORM_CONTROL_PASSWORD",
+            "secret": true,
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}
